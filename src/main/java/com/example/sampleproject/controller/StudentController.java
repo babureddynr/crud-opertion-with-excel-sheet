@@ -1,3 +1,4 @@
+
 package com.example.sampleproject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.example.sampleproject.util.ExcelHelper;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/students")
@@ -73,6 +75,27 @@ public class StudentController {
             .body(file);
     }
 
+    
+  
+    @GetMapping("/download-all")
+    public ResponseEntity<Resource> downloadAllStudents() {
+        // Fetch all students from the database
+        List<Entity> students = studentservice.findallstudents();
+        
+        // Generate Excel file from the students list
+        ByteArrayInputStream bis = ExcelHelper.studentsToExcel(students);
+        InputStreamResource file = new InputStreamResource(bis);
+
+        // Set up the response with proper headers for downloading the file
+        String filename = "all_students.xlsx";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
+    }
+
+
+    
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file, 
                            RedirectAttributes redirectAttributes) {

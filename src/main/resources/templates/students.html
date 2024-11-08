@@ -27,6 +27,11 @@
                         <a th:href="@{/students/download-template}" class="btn btn-primary mb-3">
                             Download Excel Template
                         </a>
+                        <!-- Button to Download All Students Data -->
+<a href="#" th:href="@{/students/download-all}" class="btn btn-primary">
+    Download All Students Excel
+</a>
+                        
                     </div>
                 </div>
                 <form th:action="@{/students/upload}" method="post" enctype="multipart/form-data">
