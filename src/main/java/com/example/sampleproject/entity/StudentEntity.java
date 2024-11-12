@@ -1,18 +1,28 @@
 package com.example.sampleproject.entity;
-
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@jakarta.persistence.Entity
-public class Entity {
+@Entity
+public class StudentEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String name;
-    String address;
-    String image;
+    private Long id;
+
+    @NotBlank(message = "Name cannot be blank")
+    @Size(min = 1, max = 50, message = "Name must be between 1 and 50 characters")
+    private String name;
+
+    @NotBlank(message = "Address cannot be blank")
+    @Size(max = 100, message = "Address must be 100 characters or less")
+    private String address;
+    @NotBlank(message = "Image  cannot be blank")
+    private String image; // Optional, no validation needed
+
 
     public Long getId() {
         return id;

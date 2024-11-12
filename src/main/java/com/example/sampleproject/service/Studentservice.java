@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.sampleproject.entity.Entity;
+import com.example.sampleproject.entity.StudentEntity;
 import com.example.sampleproject.repository.Repository;
 import com.example.sampleproject.util.ExcelHelper;
 
@@ -15,11 +15,11 @@ public class Studentservice {
     @Autowired
     Repository repo;
 
-    public List<Entity> findallstudents() {
+    public List<StudentEntity> findallstudents() {
         return repo.findAll();
     }
 
-    public String savestudent(Entity entity) {
+    public String savestudent(StudentEntity entity) {
         repo.save(entity);
         return "Student saved successfully with the id " + entity.getId();
     }
@@ -33,7 +33,7 @@ public class Studentservice {
         }
     }
 
-    public String save(Entity entity) {
+    public String save(StudentEntity entity) {
         repo.save(entity);
         return "Updated successfully with the id " + entity.getId();
     }
@@ -41,7 +41,7 @@ public class Studentservice {
     // New method for saving students from Excel file
     public void saveFromExcel(MultipartFile file) {
         try {
-            List<Entity> students = ExcelHelper.excelToStudents(file.getInputStream());
+            List<StudentEntity> students = (List<StudentEntity>) ExcelHelper.excelToStudents(file.getInputStream());
             repo.saveAll(students);
         } catch (IOException e) {
             throw new RuntimeException("Failed to store excel data: " + e.getMessage());
