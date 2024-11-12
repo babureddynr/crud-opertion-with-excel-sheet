@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.sampleproject.entity.StudentEntity;
 import com.example.sampleproject.repository.Repository;
 import com.example.sampleproject.util.ExcelHelper;
+import com.example.sampleproject.util.ExcelValidationResult;
 
 @Service
 public class Studentservice {
@@ -39,12 +40,14 @@ public class Studentservice {
     }
 
     // New method for saving students from Excel file
-    public void saveFromExcel(MultipartFile file) {
-        try {
-            List<StudentEntity> students = (List<StudentEntity>) ExcelHelper.excelToStudents(file.getInputStream());
-            repo.saveAll(students);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to store excel data: " + e.getMessage());
+    public ExcelValidationResult saveFromExcel(MultipartFile file) throws IOException {
+        ExcelValidationResult result = ExcelHelper.excelToStudents(file.getInputStream());
+        
+        // Save only valid students
+        if (!result.getValidStudents().isEmpty()) {
+            repo.saveAll(result.getValidStudents());
         }
+        
+        return result;
     }
 }

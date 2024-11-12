@@ -17,6 +17,7 @@ import com.example.sampleproject.entity.StudentEntity;
 import com.example.sampleproject.repository.Repository;
 import com.example.sampleproject.service.Studentservice;
 import com.example.sampleproject.util.ExcelHelper;
+import com.example.sampleproject.util.ExcelValidationResult;
 
 import jakarta.validation.Valid;
 
@@ -121,25 +122,31 @@ public class StudentController {
     }
 
     // Upload Excel file containing student data
+
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-        // Check if the uploaded file is an Excel file by its MIME type
+    public String uploadFile(@RequestParam("file") MultipartFile file, 
+                           RedirectAttributes redirectAttributes) {
         if (ExcelHelper.hasExcelFormat(file)) {
             try {
-                // If the file is in the correct format, process it to save data
-                studentservice.saveFromExcel(file);
+                ExcelValidationResult result = studentservice.saveFromExcel(file);
                 
-                // Add a success message to be displayed on the redirected page
-                redirectAttributes.addFlashAttribute("message", "Uploaded the file successfully!");
+                // Add success message with statistics
+                redirectAttributes.addFlashAttribute("message", result.getSummary());
+                
+                // If there were any failures, add the error details
+                if (result.getFailureCount() > 0) {
+                    redirectAttributes.addFlashAttribute("error", 
+                        "Validation errors:\n" + result.getErrorDetails().toString());
+                }
             } catch (Exception e) {
-                // If an error occurs during processing, add an error message for display
-                redirectAttributes.addFlashAttribute("error", "Could not upload the file: " + e.getMessage());
+                redirectAttributes.addFlashAttribute("error", 
+                    "Could not upload the file: " + e.getMessage());
             }
         } else {
-            // If the file format is incorrect, display an error message
-            redirectAttributes.addFlashAttribute("error", "Please upload an Excel file!");
+            redirectAttributes.addFlashAttribute("error", 
+                "Please upload an Excel file (.xlsx)!");
         }
-        // Redirect back to the students page after upload attempt
+        
         return "redirect:/students";
     }
 }
