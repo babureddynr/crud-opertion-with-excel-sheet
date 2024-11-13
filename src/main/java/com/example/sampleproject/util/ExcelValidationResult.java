@@ -1,5 +1,6 @@
 package com.example.sampleproject.util;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.sampleproject.entity.StudentEntity;
@@ -96,38 +97,45 @@ public class ExcelValidationResult {
             
             // Name validation
             if (student.getName() == null || student.getName().trim().isEmpty()) {
-                // If name is empty or null, add an error message for this row
-                result.errorDetails.append("Row ").append(rowNumber)
-                    .append(": Name is required\n");
-                isValid = false;  // Set isValid to false as the validation failed
-            } else if (student.getName().length() > 100) {
-                // If the name length exceeds 100 characters, add an error message
-                result.errorDetails.append("Row ").append(rowNumber)
-                    .append(": Name cannot exceed 100 characters\n");
+                result.errorDetails.append("Row ").append(rowNumber).append(": Name is required\n");
+                isValid = false;
+            } else if (student.getName().length() > 50) {
+                result.errorDetails.append("Row ").append(rowNumber).append(": Name cannot exceed 50 characters\n");
                 isValid = false;
             }
 
             // Address validation
             if (student.getAddress() == null || student.getAddress().trim().isEmpty()) {
-                // If address is empty or null, add an error message for this row
-                result.errorDetails.append("Row ").append(rowNumber)
-                    .append(": Address is required\n");
-                isValid = false;  // Set isValid to false as the validation failed
+                result.errorDetails.append("Row ").append(rowNumber).append(": Address is required\n");
+                isValid = false;
             }
 
             // Image URL validation (optional)
             if (student.getImage() != null && !student.getImage().trim().isEmpty()) {
-                // If image URL is provided, validate its format
-                if (!student.getImage().startsWith("http://") && 
-                    !student.getImage().startsWith("https://")) {
-                    // If the image URL doesn't start with "http://" or "https://", add an error message
-                    result.errorDetails.append("Row ").append(rowNumber)
-                        .append(": Invalid image URL format\n");
-                    isValid = false;  // Set isValid to false as the validation failed
+                if (!student.getImage().startsWith("http://") && !student.getImage().startsWith("https://")) {
+                    result.errorDetails.append("Row ").append(rowNumber).append(": Invalid image URL format\n");
+                    isValid = false;
                 }
             }
 
-            // Return the validation result (true if valid, false if invalid)
+            // Salary validation
+            if (student.getSalary() == null || student.getSalary() <= 0) {
+                result.errorDetails.append("Row ").append(rowNumber).append(": Salary must be a positive value\n");
+                isValid = false;
+            }
+
+            // DOB (Date of Birth) validation
+            if (student.getDob() == null || student.getDob().isAfter(LocalDate.now())) {
+                result.errorDetails.append("Row ").append(rowNumber).append(": Date of Birth must be in the past or today\n");
+                isValid = false;
+            }
+
+            // isActive (Active/Inactive) validation
+            if (student.getIsActive() == null) {
+                result.errorDetails.append("Row ").append(rowNumber).append(":  status must be specified\n");
+                isValid = false;
+            }
+
             return isValid;
         }
     }

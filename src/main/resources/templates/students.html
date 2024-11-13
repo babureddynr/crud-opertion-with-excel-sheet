@@ -30,7 +30,7 @@
                 </div>
                 <form th:action="@{/students/upload}" method="post" enctype="multipart/form-data">
                     <div class="input-group mb-3">
-                        <input type="file" name="file" class="form-control" accept=".xlsx" required>
+                        <input type="file" name="file" class="form-control" accept=".xlsx" required="file is required">
                         <button class="btn btn-success" type="submit">Upload</button>
                     </div>
                 </form>
@@ -68,6 +68,31 @@
         <div th:if="${#fields.hasErrors('image')}" th:errors="*{image}" class="text-danger"></div>
     </div>
 
+    <!-- Salary Field -->
+    <div class="mb-3">
+        <label for="salary" class="form-label">Salary</label>
+        <input type="number" class="form-control" id="salary" th:field="*{salary}">
+        <div th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}" class="text-danger"></div>
+    </div>
+
+    <!-- Date of Birth Field -->
+    <div class="mb-3">
+        <label for="dob" class="form-label">Date of Birth</label>
+        <input type="date" class="form-control" id="dob" th:field="*{dob}">
+        <div th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}" class="text-danger"></div>
+    </div>
+
+    <!-- Active Status Field -->
+    <div class="mb-3">
+        <label for="isActive" class="form-label">Status</label>
+        <select class="form-control" id="isActive" th:field="*{isActive}">
+            <option value="">Select status</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+        </select>
+        <div th:if="${#fields.hasErrors('isActive')}" th:errors="*{isActive}" class="text-danger"></div>
+    </div>
+
     <!-- Submit Button -->
     <button type="submit" class="btn btn-primary">Save Student</button>
 </form>
@@ -95,6 +120,9 @@
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Image</th>
+                                <th>Salary</th>
+                                <th>DOB</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -104,6 +132,9 @@
                                 <td th:text="${student.name}"></td>
                                 <td th:text="${student.address}"></td>
                                 <td><img th:if="${student.image}" th:src="${student.image}" alt="Student Image" style="max-width: 50px;"></td>
+                                <td th:text="${#numbers.formatDecimal(student.salary, 0, 'COMMA', 2, 'POINT')}"></td>
+                                <td th:text="${#temporals.format(student.dob, 'yyyy-MM-dd')}"></td>
+                                <td th:text="${student.isActive} ? 'Active' : 'Inactive'"></td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" th:data-bs-target="'#editModal' + ${student.id}">
                                         Edit</button>
@@ -138,6 +169,21 @@
                             <div class="mb-3">
                                 <label for="image" class="form-label">Image URL</label>
                                 <input type="text" class="form-control" name="image" th:value="${student.image}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="salary" class="form-label">Salary</label>
+                                <input type="number" class="form-control" name="salary" th:value="${student.salary}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" name="dob" th:value="${#temporals.format(student.dob, 'yyyy-MM-dd')}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="isActive" class="form-label">Status</label>
+                                <select class="form-control" name="isActive">
+                                    <option th:selected="${student.isActive}" value="true">Active</option>
+                                    <option th:selected="${!student.isActive}" value="false">Inactive</option>
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
